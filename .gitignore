@@ -27,3 +27,15 @@ lerna-debug.log*
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Claude / Superpowers
+.claude/
+.superpowers/
+docs/superpowers/
+
+# Test coverage
+/coverage
+*.lcov
+
+# Test snapshots
+**/__snapshots__/
