@@ -1,35 +1,38 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Role } from '../../common/enums/role.enum';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column({ select: false })
-  password: string;
+  password!: string;
 
   @Column()
-  fullName: string;
+  fullName!: string;
 
   @Column({ nullable: true })
-  avatar: string;
+  avatar?: string;
 
   @Column({ type: 'enum', enum: Role, default: Role.READER })
-  role: Role;
+  role!: Role;
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt?: Date;
 }
