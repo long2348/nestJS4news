@@ -25,7 +25,7 @@ export class UsersService {
   findByEmail(email: string): Promise<User | null> {
     return this.repo.findOne({
       where: { email },
-      select: ['id', 'email', 'password', 'role', 'isActive', 'fullName', 'avatar', 'createdAt', 'updatedAt'],
+      select: { id: true, email: true, password: true, role: true, isActive: true, fullName: true, avatar: true, createdAt: true, updatedAt: true },
     });
   }
 
