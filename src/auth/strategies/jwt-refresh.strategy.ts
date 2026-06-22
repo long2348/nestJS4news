@@ -5,18 +5,23 @@ import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 
 @Injectable()
-export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+export class JwtRefreshStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
   constructor(config: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         (req: Request) => req?.cookies?.refresh_token ?? null,
       ]),
-      secretOrKey: config.get<string>('JWT_REFRESH_SECRET'),
+      secretOrKey: config.get<string>('JWT_REFRESH_SECRET')!,
       passReqToCallback: true,
     });
   }
 
   validate(req: Request, payload: { sub: number }) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     return { userId: payload.sub, refreshToken: req.cookies?.refresh_token };
   }
 }
