@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Comment } from './entities/comment.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Role } from '../common/enums/role.enum';
@@ -14,13 +18,17 @@ export class CommentsService {
 
   findByArticle(articleId: number): Promise<Comment[]> {
     return this.repo.find({
-      where: { articleId, parentId: null },
-      relations: ['author', 'replies', 'replies.author'],
+      where: { articleId, parentId: IsNull() },
+      relations: { author: true, replies: { author: true } },
       order: { createdAt: 'DESC' },
     });
   }
 
-  create(authorId: number, articleId: number, dto: CreateCommentDto): Promise<Comment> {
+  create(
+    authorId: number,
+    articleId: number,
+    dto: CreateCommentDto,
+  ): Promise<Comment> {
     return this.repo.save(this.repo.create({ ...dto, authorId, articleId }));
   }
 

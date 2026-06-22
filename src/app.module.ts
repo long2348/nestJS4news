@@ -9,6 +9,8 @@ import { TagsModule } from './tags/tags.module';
 import { ArticlesModule } from './articles/articles.module';
 import { CommentsModule } from './comments/comments.module';
 import { NewsletterModule } from './newsletter/newsletter.module';
+import { GalleryModule } from './gallery/gallery.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -34,6 +36,8 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     ArticlesModule,
     CommentsModule,
     NewsletterModule,
+    GalleryModule,
+    SearchModule,
   ],
 })
 export class AppModule {}
