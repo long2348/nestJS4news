@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -13,11 +17,17 @@ export class CategoriesService {
   ) {}
 
   findAll(): Promise<Category[]> {
-    return this.repo.find({ where: { parentId: null }, relations: ['children'] });
+    return this.repo.find({
+      where: { parentId: IsNull() },
+      relations: { children: true },
+    });
   }
 
   async findBySlug(slug: string): Promise<Category> {
-    const cat = await this.repo.findOne({ where: { slug }, relations: ['children'] });
+    const cat = await this.repo.findOne({
+      where: { slug },
+      relations: { children: true },
+    });
     if (!cat) throw new NotFoundException('Category not found');
     return cat;
   }

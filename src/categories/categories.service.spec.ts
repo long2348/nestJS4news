@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { IsNull } from 'typeorm';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Category } from './entities/category.entity';
@@ -30,17 +31,23 @@ describe('CategoriesService', () => {
     mockRepo.find.mockResolvedValue([{ id: 1, name: 'Thời sự', children: [] }]);
     const result = await service.findAll();
     expect(result).toHaveLength(1);
-    expect(mockRepo.find).toHaveBeenCalledWith({ where: { parentId: null }, relations: ['children'] });
+    expect(mockRepo.find).toHaveBeenCalledWith({
+      where: { parentId: IsNull() },
+      relations: { children: true },
+    });
   });
 
   it('should throw NotFoundException when slug not found', async () => {
     mockRepo.findOne.mockResolvedValue(null);
-    await expect(service.findBySlug('not-exist')).rejects.toThrow(NotFoundException);
+    await expect(service.findBySlug('not-exist')).rejects.toThrow(
+      NotFoundException,
+    );
   });
 
   it('should throw ConflictException on duplicate slug', async () => {
     mockRepo.findOne.mockResolvedValueOnce({ id: 1 });
-    await expect(service.create({ name: 'Thời sự', slug: 'thoi-su' }))
-      .rejects.toThrow(ConflictException);
+    await expect(
+      service.create({ name: 'Thời sự', slug: 'thoi-su' }),
+    ).rejects.toThrow(ConflictException);
   });
 });
