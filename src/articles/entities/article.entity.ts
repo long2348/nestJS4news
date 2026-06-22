@@ -1,6 +1,13 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, CreateDateColumn,
-  UpdateDateColumn, ManyToOne, ManyToMany, JoinColumn, JoinTable,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  ManyToMany,
+  JoinColumn,
+  JoinTable,
+  BeforeInsert,
+  BeforeUpdate,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Category } from '../../categories/entities/category.entity';
@@ -15,59 +22,70 @@ export enum ArticleStatus {
 @Entity('articles')
 export class Article {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column({ unique: true })
-  slug: string;
+  slug!: string;
 
-  @Column({ nullable: true, type: 'text' })
-  summary: string;
+  @Column({ type: 'text', nullable: true })
+  summary?: string;
 
   @Column({ type: 'longtext' })
-  content: string;
+  content!: string;
 
   @Column({ nullable: true })
-  thumbnail: string;
+  thumbnail?: string;
 
   @Column({ type: 'enum', enum: ArticleStatus, default: ArticleStatus.DRAFT })
-  status: ArticleStatus;
+  status!: ArticleStatus;
 
   @Column({ default: false })
-  isBreaking: boolean;
+  isBreaking!: boolean;
 
   @Column({ default: false })
-  isTrending: boolean;
+  isTrending!: boolean;
 
   @Column({ default: 0 })
-  viewCount: number;
+  viewCount!: number;
 
   @Column()
-  authorId: number;
+  authorId!: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'authorId' })
-  author: User;
+  author!: User;
 
   @Column({ nullable: true })
-  categoryId: number;
+  categoryId?: number;
 
-  @ManyToOne(() => Category, { nullable: true })
+  @ManyToOne(() => Category, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'categoryId' })
-  category: Category;
+  category?: Category;
 
   @ManyToMany(() => Tag)
   @JoinTable({ name: 'article_tags' })
-  tags: Tag[];
+  tags!: Tag[];
 
-  @Column({ nullable: true })
-  publishedAt: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  publishedAt?: Date;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt!: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  updatedAt?: Date;
+
+  @BeforeInsert()
+  setCreatedAt() {
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+
+  @BeforeUpdate()
+  setUpdatedAt() {
+    this.updatedAt = new Date();
+  }
 }
