@@ -2,8 +2,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
+  BeforeInsert,
+  BeforeUpdate,
 } from 'typeorm';
 import { Role } from '../../common/enums/role.enum';
 
@@ -30,9 +30,20 @@ export class User {
   @Column({ default: true })
   isActive!: boolean;
 
-  @CreateDateColumn()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt!: Date;
 
-  @UpdateDateColumn()
+  @Column({ type: 'timestamp', nullable: true })
   updatedAt?: Date;
+
+  @BeforeInsert()
+  setCreatedAt() {
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+
+  @BeforeUpdate()
+  setUpdatedAt() {
+    this.updatedAt = new Date();
+  }
 }
