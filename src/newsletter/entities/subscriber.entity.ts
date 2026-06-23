@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
 
 @Entity('subscribers')
 export class Subscriber {
@@ -11,6 +11,11 @@ export class Subscriber {
   @Column({ default: true })
   isActive: boolean;
 
-  @CreateDateColumn()
+  @Column({ type: 'datetime' })
   subscribedAt: Date;
+
+  @BeforeInsert()
+  setSubscribedAt() {
+    this.subscribedAt = new Date();
+  }
 }

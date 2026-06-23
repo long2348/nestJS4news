@@ -1,5 +1,8 @@
 import {
-  Injectable, NotFoundException, ForbiddenException, ConflictException,
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,16 +22,33 @@ export class ArticlesService {
   ) {}
 
   async findAll(filter: FilterArticleDto) {
-    const { page, limit, sortBy = 'publishedAt', order = 'DESC', q, categoryId, tag, status } = filter;
-    const qb = this.repo.createQueryBuilder('article')
+    const {
+      page,
+      limit,
+      sortBy = 'publishedAt',
+      order = 'DESC',
+      q,
+      categoryId,
+      tag,
+      status,
+    } = filter;
+    const qb = this.repo
+      .createQueryBuilder('article')
       .leftJoinAndSelect('article.author', 'author')
       .leftJoinAndSelect('article.category', 'category')
       .leftJoinAndSelect('article.tags', 'tags');
 
     if (status) qb.andWhere('article.status = :status', { status });
-    else qb.andWhere('article.status = :status', { status: ArticleStatus.PUBLISHED });
-    if (q) qb.andWhere('(article.title LIKE :q OR article.summary LIKE :q)', { q: `%${q}%` });
-    if (categoryId) qb.andWhere('article.categoryId = :categoryId', { categoryId });
+    else
+      qb.andWhere('article.status = :status', {
+        status: ArticleStatus.PUBLISHED,
+      });
+    if (q)
+      qb.andWhere('(article.title LIKE :q OR article.summary LIKE :q)', {
+        q: `%${q}%`,
+      });
+    if (categoryId)
+      qb.andWhere('article.categoryId = :categoryId', { categoryId });
     if (tag) qb.andWhere('tags.slug = :tag', { tag });
 
     qb.orderBy(`article.${sortBy}`, order)
@@ -36,13 +56,16 @@ export class ArticlesService {
       .take(limit);
 
     const [data, total] = await qb.getManyAndCount();
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+    return {
+      data,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   findBreaking(): Promise<Article[]> {
     return this.repo.find({
       where: { isBreaking: true, status: ArticleStatus.PUBLISHED },
-      relations: ['author', 'category'],
+      relations: { author: true, category: true },
       order: { publishedAt: 'DESC' },
     });
   }
@@ -50,7 +73,7 @@ export class ArticlesService {
   findTrending(): Promise<Article[]> {
     return this.repo.find({
       where: { isTrending: true, status: ArticleStatus.PUBLISHED },
-      relations: ['author', 'category'],
+      relations: { author: true, category: true },
       order: { publishedAt: 'DESC' },
     });
   }
@@ -58,7 +81,7 @@ export class ArticlesService {
   async findBySlug(slug: string): Promise<Article> {
     const article = await this.repo.findOne({
       where: { slug },
-      relations: ['author', 'category', 'tags'],
+      relations: { author: true, category: true, tags: true },
     });
     if (!article) throw new NotFoundException('Article not found');
     await this.repo.increment({ id: article.id }, 'viewCount', 1);
@@ -68,18 +91,30 @@ export class ArticlesService {
   async create(authorId: number, dto: CreateArticleDto): Promise<Article> {
     const existing = await this.repo.findOne({ where: { slug: dto.slug } });
     if (existing) throw new ConflictException('Slug already exists');
-    const tags = dto.tagIds?.length ? await this.tagsService.findByIds(dto.tagIds) : [];
+    const tags = dto.tagIds?.length
+      ? await this.tagsService.findByIds(dto.tagIds)
+      : [];
     const { tagIds, ...rest } = dto;
     return this.repo.save(this.repo.create({ ...rest, authorId, tags }));
   }
 
-  async update(id: number, userId: number, role: Role, dto: UpdateArticleDto): Promise<Article> {
-    const article = await this.repo.findOne({ where: { id }, relations: ['tags'] });
+  async update(
+    id: number,
+    userId: number,
+    role: Role,
+    dto: UpdateArticleDto,
+  ): Promise<Article> {
+    const article = await this.repo.findOne({
+      where: { id },
+      relations: { tags: true },
+    });
     if (!article) throw new NotFoundException('Article not found');
     if (role === Role.EDITOR && article.authorId !== userId) {
       throw new ForbiddenException('You can only edit your own articles');
     }
-    const tags = dto.tagIds?.length ? await this.tagsService.findByIds(dto.tagIds) : article.tags;
+    const tags = dto.tagIds?.length
+      ? await this.tagsService.findByIds(dto.tagIds)
+      : article.tags;
     const { tagIds, ...rest } = dto;
     Object.assign(article, rest);
     article.tags = tags;

@@ -68,14 +68,19 @@ describe('Auth (integration)', () => {
         JwtRefreshStrategy,
         UsersService,
         { provide: getRepositoryToken(User), useValue: mockUserRepo },
-        { provide: getRepositoryToken(RefreshToken), useValue: mockRefreshTokenRepo },
+        {
+          provide: getRepositoryToken(RefreshToken),
+          useValue: mockRefreshTokenRepo,
+        },
       ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     app.setGlobalPrefix('api');
     app.use(cookieParser());
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, transform: true }),
+    );
     app.useGlobalFilters(new HttpExceptionFilter());
     app.useGlobalInterceptors(new ResponseInterceptor());
 
@@ -91,11 +96,23 @@ describe('Auth (integration)', () => {
     jest.clearAllMocks();
   });
 
-  const signAccessToken = (userId: number = 1, email: string = 'test@example.com') =>
-    jwtService.sign({ sub: userId, email }, { secret: 'test-jwt-secret', expiresIn: '1h' });
+  const signAccessToken = (
+    userId: number = 1,
+    email: string = 'test@example.com',
+  ) =>
+    jwtService.sign(
+      { sub: userId, email },
+      { secret: 'test-jwt-secret', expiresIn: '1h' },
+    );
 
-  const signRefreshToken = (userId: number = 1, email: string = 'test@example.com') =>
-    jwtService.sign({ sub: userId, email }, { secret: 'test-jwt-refresh-secret', expiresIn: '7d' });
+  const signRefreshToken = (
+    userId: number = 1,
+    email: string = 'test@example.com',
+  ) =>
+    jwtService.sign(
+      { sub: userId, email },
+      { secret: 'test-jwt-refresh-secret', expiresIn: '7d' },
+    );
 
   // ─── Register ────────────────────────────────────────────────────────────────
 
@@ -107,7 +124,11 @@ describe('Auth (integration)', () => {
 
       const res = await request(app.getHttpServer())
         .post('/api/auth/register')
-        .send({ email: 'test@example.com', password: 'password123', fullName: 'Test User' })
+        .send({
+          email: 'test@example.com',
+          password: 'password123',
+          fullName: 'Test User',
+        })
         .expect(201);
 
       expect(res.body.success).toBe(true);
@@ -118,7 +139,11 @@ describe('Auth (integration)', () => {
     it('trả về 400 khi email không hợp lệ', async () => {
       const res = await request(app.getHttpServer())
         .post('/api/auth/register')
-        .send({ email: 'not-valid-email', password: 'password123', fullName: 'Test' })
+        .send({
+          email: 'not-valid-email',
+          password: 'password123',
+          fullName: 'Test',
+        })
         .expect(400);
 
       expect(res.body.success).toBe(false);
@@ -148,7 +173,11 @@ describe('Auth (integration)', () => {
 
       const res = await request(app.getHttpServer())
         .post('/api/auth/register')
-        .send({ email: 'taken@example.com', password: 'password123', fullName: 'Test' })
+        .send({
+          email: 'taken@example.com',
+          password: 'password123',
+          fullName: 'Test',
+        })
         .expect(409);
 
       expect(res.body.success).toBe(false);
@@ -175,8 +204,10 @@ describe('Auth (integration)', () => {
       expect(res.body.success).toBe(true);
       expect(res.body.data).toHaveProperty('access_token');
 
-      const cookies = res.headers['set-cookie'] as string[];
-      expect(cookies.some((c: string) => c.startsWith('refresh_token='))).toBe(true);
+      const cookies = res.headers['set-cookie'] as unknown as string[];
+      expect(cookies.some((c: string) => c.startsWith('refresh_token='))).toBe(
+        true,
+      );
       expect(cookies.some((c: string) => c.includes('HttpOnly'))).toBe(true);
     });
 
@@ -243,9 +274,7 @@ describe('Auth (integration)', () => {
     });
 
     it('trả về 401 khi không có refresh_token cookie', async () => {
-      await request(app.getHttpServer())
-        .post('/api/auth/refresh')
-        .expect(401);
+      await request(app.getHttpServer()).post('/api/auth/refresh').expect(401);
     });
 
     it('trả về 401 khi refresh token đã hết hạn trong DB', async () => {
@@ -272,9 +301,7 @@ describe('Auth (integration)', () => {
 
   describe('POST /api/auth/logout', () => {
     it('trả về 401 khi chưa đăng nhập', async () => {
-      await request(app.getHttpServer())
-        .post('/api/auth/logout')
-        .expect(401);
+      await request(app.getHttpServer()).post('/api/auth/logout').expect(401);
     });
 
     it('xóa cookie và trả về success khi đã đăng nhập', async () => {
@@ -294,8 +321,10 @@ describe('Auth (integration)', () => {
         userId: 1,
       });
 
-      const cookies = res.headers['set-cookie'] as string[];
-      const refreshCookie = cookies?.find((c: string) => c.startsWith('refresh_token='));
+      const cookies = res.headers['set-cookie'] as unknown as string[];
+      const refreshCookie = cookies?.find((c: string) =>
+        c.startsWith('refresh_token='),
+      );
       expect(refreshCookie).toMatch(/refresh_token=;/);
     });
   });

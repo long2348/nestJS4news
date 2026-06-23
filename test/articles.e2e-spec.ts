@@ -9,7 +9,10 @@ import cookieParser from 'cookie-parser';
 
 import { ArticlesService } from '../src/articles/articles.service';
 import { ArticlesController } from '../src/articles/articles.controller';
-import { Article, ArticleStatus } from '../src/articles/entities/article.entity';
+import {
+  Article,
+  ArticleStatus,
+} from '../src/articles/entities/article.entity';
 import { TagsService } from '../src/tags/tags.service';
 import { Tag } from '../src/tags/entities/tag.entity';
 import { UsersService } from '../src/users/users.service';
@@ -117,7 +120,9 @@ describe('Articles (integration)', () => {
     app = moduleFixture.createNestApplication();
     app.setGlobalPrefix('api');
     app.use(cookieParser());
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, transform: true }),
+    );
     app.useGlobalFilters(new HttpExceptionFilter());
     app.useGlobalInterceptors(new ResponseInterceptor());
 
@@ -277,8 +282,14 @@ describe('Articles (integration)', () => {
       const token = signToken(MOCK_USER_EDITOR);
       mockUserRepo.findOne.mockResolvedValue(MOCK_USER_EDITOR);
       mockArticleRepo.findOne.mockResolvedValue(null);
-      mockArticleRepo.create.mockReturnValue({ ...MOCK_ARTICLE, ...validPayload });
-      mockArticleRepo.save.mockResolvedValue({ ...MOCK_ARTICLE, ...validPayload });
+      mockArticleRepo.create.mockReturnValue({
+        ...MOCK_ARTICLE,
+        ...validPayload,
+      });
+      mockArticleRepo.save.mockResolvedValue({
+        ...MOCK_ARTICLE,
+        ...validPayload,
+      });
 
       const res = await request(app.getHttpServer())
         .post('/api/articles')
@@ -294,8 +305,14 @@ describe('Articles (integration)', () => {
       const token = signToken(MOCK_USER_ADMIN);
       mockUserRepo.findOne.mockResolvedValue(MOCK_USER_ADMIN);
       mockArticleRepo.findOne.mockResolvedValue(null);
-      mockArticleRepo.create.mockReturnValue({ ...MOCK_ARTICLE, ...validPayload });
-      mockArticleRepo.save.mockResolvedValue({ ...MOCK_ARTICLE, ...validPayload });
+      mockArticleRepo.create.mockReturnValue({
+        ...MOCK_ARTICLE,
+        ...validPayload,
+      });
+      mockArticleRepo.save.mockResolvedValue({
+        ...MOCK_ARTICLE,
+        ...validPayload,
+      });
 
       const res = await request(app.getHttpServer())
         .post('/api/articles')
@@ -379,9 +396,7 @@ describe('Articles (integration)', () => {
 
   describe('DELETE /api/articles/:id', () => {
     it('trả về 401 khi chưa đăng nhập', async () => {
-      await request(app.getHttpServer())
-        .delete('/api/articles/1')
-        .expect(401);
+      await request(app.getHttpServer()).delete('/api/articles/1').expect(401);
     });
 
     it('trả về 403 khi editor cố xóa', async () => {

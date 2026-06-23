@@ -80,7 +80,9 @@ describe('Comments (integration)', () => {
     app = moduleFixture.createNestApplication();
     app.setGlobalPrefix('api');
     app.use(cookieParser());
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, transform: true }),
+    );
     app.useGlobalFilters(new HttpExceptionFilter());
     app.useGlobalInterceptors(new ResponseInterceptor());
 
@@ -130,7 +132,7 @@ describe('Comments (integration)', () => {
         .expect(200);
 
       expect(res.body.success).toBe(true);
-      expect(res.body.data).toHaveLength(0);
+      expect(res?.body.data).toHaveLength(0);
     });
 
     it('trả về 400 khi articleId không phải số', async () => {
@@ -228,7 +230,10 @@ describe('Comments (integration)', () => {
       const token = signToken(MOCK_USER_ADMIN);
       mockUserRepo.findOne.mockResolvedValue(MOCK_USER_ADMIN);
       mockCommentRepo.findOne.mockResolvedValue(MOCK_COMMENT);
-      mockCommentRepo.save.mockResolvedValue({ ...MOCK_COMMENT, isApproved: true });
+      mockCommentRepo.save.mockResolvedValue({
+        ...MOCK_COMMENT,
+        isApproved: true,
+      });
 
       const res = await request(app.getHttpServer())
         .patch('/api/comments/1/approve')
@@ -257,15 +262,16 @@ describe('Comments (integration)', () => {
 
   describe('DELETE /api/comments/:id', () => {
     it('trả về 401 khi chưa đăng nhập', async () => {
-      await request(app.getHttpServer())
-        .delete('/api/comments/1')
-        .expect(401);
+      await request(app.getHttpServer()).delete('/api/comments/1').expect(401);
     });
 
     it('người dùng xóa comment của chính mình thành công', async () => {
       const token = signToken(MOCK_USER_READER);
       mockUserRepo.findOne.mockResolvedValue(MOCK_USER_READER);
-      mockCommentRepo.findOne.mockResolvedValue({ ...MOCK_COMMENT, authorId: MOCK_USER_READER.id });
+      mockCommentRepo.findOne.mockResolvedValue({
+        ...MOCK_COMMENT,
+        authorId: MOCK_USER_READER.id,
+      });
       mockCommentRepo.remove.mockResolvedValue({});
 
       await request(app.getHttpServer())
@@ -279,7 +285,10 @@ describe('Comments (integration)', () => {
     it('trả về 403 khi người dùng cố xóa comment của người khác', async () => {
       const token = signToken(MOCK_USER_READER);
       mockUserRepo.findOne.mockResolvedValue(MOCK_USER_READER);
-      mockCommentRepo.findOne.mockResolvedValue({ ...MOCK_COMMENT, authorId: 999 });
+      mockCommentRepo.findOne.mockResolvedValue({
+        ...MOCK_COMMENT,
+        authorId: 999,
+      });
 
       const res = await request(app.getHttpServer())
         .delete('/api/comments/1')
@@ -293,7 +302,10 @@ describe('Comments (integration)', () => {
     it('admin xóa comment của bất kỳ người dùng nào', async () => {
       const token = signToken(MOCK_USER_ADMIN);
       mockUserRepo.findOne.mockResolvedValue(MOCK_USER_ADMIN);
-      mockCommentRepo.findOne.mockResolvedValue({ ...MOCK_COMMENT, authorId: 999 });
+      mockCommentRepo.findOne.mockResolvedValue({
+        ...MOCK_COMMENT,
+        authorId: 999,
+      });
       mockCommentRepo.remove.mockResolvedValue({});
 
       await request(app.getHttpServer())

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BeforeInsert } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
 @Entity('media')
@@ -28,6 +28,11 @@ export class Media {
   @JoinColumn({ name: 'uploadedById' })
   uploadedBy: User;
 
-  @CreateDateColumn()
+  @Column({ type: 'datetime' })
   createdAt: Date;
+
+  @BeforeInsert()
+  setCreatedAt() {
+    this.createdAt = new Date();
+  }
 }

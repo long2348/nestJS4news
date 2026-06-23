@@ -30,7 +30,7 @@ export class User {
   @Column({ default: true })
   isActive!: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp' })
   createdAt!: Date;
 
   @Column({ type: 'timestamp', nullable: true })

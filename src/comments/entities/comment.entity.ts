@@ -1,6 +1,6 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, CreateDateColumn,
-  ManyToOne, OneToMany, JoinColumn,
+  Entity, PrimaryGeneratedColumn, Column,
+  ManyToOne, OneToMany, JoinColumn, BeforeInsert,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
@@ -35,6 +35,11 @@ export class Comment {
   @Column({ default: false })
   isApproved: boolean;
 
-  @CreateDateColumn()
+  @Column({ type: 'timestamp' })
   createdAt: Date;
+
+  @BeforeInsert()
+  setCreatedAt() {
+    this.createdAt = new Date();
+  }
 }
