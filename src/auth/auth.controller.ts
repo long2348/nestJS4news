@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Req, Res, UseGuards, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Res,
+  UseGuards,
+  HttpCode,
+} from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -21,7 +29,10 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   @Throttle({ default: { ttl: 60000, limit: 5 } })
-  async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { accessToken, refreshToken } = await this.authService.login(dto);
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
@@ -34,9 +45,13 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(200)
   @UseGuards(JwtRefreshGuard)
-  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { userId, refreshToken } = req.user as any;
-    const { accessToken, refreshToken: newRefresh } = await this.authService.refresh(userId, refreshToken);
+    const { accessToken, refreshToken: newRefresh } =
+      await this.authService.refresh(userId, refreshToken);
     res.cookie('refresh_token', newRefresh, {
       httpOnly: true,
       sameSite: 'strict',

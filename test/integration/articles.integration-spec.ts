@@ -7,20 +7,20 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
 
-import { ArticlesService } from '../src/articles/articles.service';
-import { ArticlesController } from '../src/articles/articles.controller';
+import { ArticlesService } from '../../src/articles/articles.service';
+import { ArticlesController } from '../../src/articles/articles.controller';
 import {
   Article,
   ArticleStatus,
-} from '../src/articles/entities/article.entity';
-import { TagsService } from '../src/tags/tags.service';
-import { Tag } from '../src/tags/entities/tag.entity';
-import { UsersService } from '../src/users/users.service';
-import { User } from '../src/users/entities/user.entity';
-import { JwtStrategy } from '../src/auth/strategies/jwt.strategy';
-import { ResponseInterceptor } from '../src/common/interceptors/response.interceptor';
-import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
-import { Role } from '../src/common/enums/role.enum';
+} from '../../src/articles/entities/article.entity';
+import { TagsService } from '../../src/tags/tags.service';
+import { Tag } from '../../src/tags/entities/tag.entity';
+import { UsersService } from '../../src/users/users.service';
+import { User } from '../../src/users/entities/user.entity';
+import { JwtStrategy } from '../../src/auth/strategies/jwt.strategy';
+import { ResponseInterceptor } from '../../src/common/interceptors/response.interceptor';
+import { HttpExceptionFilter } from '../../src/common/filters/http-exception.filter';
+import { Role } from '../../src/common/enums/role.enum';
 
 process.env.JWT_SECRET = 'test-jwt-secret';
 

@@ -8,16 +8,16 @@ import { ConfigModule } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
 import * as bcrypt from 'bcrypt';
 
-import { AuthService } from '../src/auth/auth.service';
-import { AuthController } from '../src/auth/auth.controller';
-import { JwtStrategy } from '../src/auth/strategies/jwt.strategy';
-import { JwtRefreshStrategy } from '../src/auth/strategies/jwt-refresh.strategy';
-import { UsersService } from '../src/users/users.service';
-import { User } from '../src/users/entities/user.entity';
-import { RefreshToken } from '../src/auth/entities/refresh-token.entity';
-import { ResponseInterceptor } from '../src/common/interceptors/response.interceptor';
-import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
-import { Role } from '../src/common/enums/role.enum';
+import { AuthService } from '../../src/auth/auth.service';
+import { AuthController } from '../../src/auth/auth.controller';
+import { JwtStrategy } from '../../src/auth/strategies/jwt.strategy';
+import { JwtRefreshStrategy } from '../../src/auth/strategies/jwt-refresh.strategy';
+import { UsersService } from '../../src/users/users.service';
+import { User } from '../../src/users/entities/user.entity';
+import { RefreshToken } from '../../src/auth/entities/refresh-token.entity';
+import { ResponseInterceptor } from '../../src/common/interceptors/response.interceptor';
+import { HttpExceptionFilter } from '../../src/common/filters/http-exception.filter';
+import { Role } from '../../src/common/enums/role.enum';
 
 process.env.JWT_SECRET = 'test-jwt-secret';
 process.env.JWT_REFRESH_SECRET = 'test-jwt-refresh-secret';

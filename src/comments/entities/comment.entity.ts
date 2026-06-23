@@ -35,7 +35,7 @@ export class Comment {
   @Column({ default: false })
   isApproved: boolean;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   createdAt: Date;
 
   @BeforeInsert()

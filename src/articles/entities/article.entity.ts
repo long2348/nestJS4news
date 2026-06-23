@@ -33,13 +33,13 @@ export class Article {
   @Column({ type: 'text', nullable: true })
   summary?: string;
 
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   content!: string;
 
   @Column({ nullable: true })
   thumbnail?: string;
 
-  @Column({ type: 'enum', enum: ArticleStatus, default: ArticleStatus.DRAFT })
+  @Column({ type: 'simple-enum', enum: ArticleStatus, default: ArticleStatus.DRAFT })
   status!: ArticleStatus;
 
   @Column({ default: false })
@@ -69,13 +69,13 @@ export class Article {
   @JoinTable({ name: 'article_tags' })
   tags!: Tag[];
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   publishedAt?: Date;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   createdAt!: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   updatedAt?: Date;
 
   @BeforeInsert()

@@ -24,16 +24,16 @@ export class User {
   @Column({ nullable: true })
   avatar?: string;
 
-  @Column({ type: 'enum', enum: Role, default: Role.READER })
+  @Column({ type: 'simple-enum', enum: Role, default: Role.READER })
   role!: Role;
 
   @Column({ default: true })
   isActive!: boolean;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   createdAt!: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   updatedAt?: Date;
 
   @BeforeInsert()

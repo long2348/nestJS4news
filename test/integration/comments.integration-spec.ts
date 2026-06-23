@@ -7,15 +7,15 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
 
-import { CommentsService } from '../src/comments/comments.service';
-import { CommentsController } from '../src/comments/comments.controller';
-import { Comment } from '../src/comments/entities/comment.entity';
-import { UsersService } from '../src/users/users.service';
-import { User } from '../src/users/entities/user.entity';
-import { JwtStrategy } from '../src/auth/strategies/jwt.strategy';
-import { ResponseInterceptor } from '../src/common/interceptors/response.interceptor';
-import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
-import { Role } from '../src/common/enums/role.enum';
+import { CommentsService } from '../../src/comments/comments.service';
+import { CommentsController } from '../../src/comments/comments.controller';
+import { Comment } from '../../src/comments/entities/comment.entity';
+import { UsersService } from '../../src/users/users.service';
+import { User } from '../../src/users/entities/user.entity';
+import { JwtStrategy } from '../../src/auth/strategies/jwt.strategy';
+import { ResponseInterceptor } from '../../src/common/interceptors/response.interceptor';
+import { HttpExceptionFilter } from '../../src/common/filters/http-exception.filter';
+import { Role } from '../../src/common/enums/role.enum';
 
 process.env.JWT_SECRET = 'test-jwt-secret';
 
