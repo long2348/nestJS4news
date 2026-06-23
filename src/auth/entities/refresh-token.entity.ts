@@ -22,6 +22,6 @@ export class RefreshToken {
   @JoinColumn({ name: 'userId' })
   user!: User;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   expiresAt!: Date;
 }

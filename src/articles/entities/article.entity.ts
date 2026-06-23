@@ -72,7 +72,7 @@ export class Article {
   @Column({ type: 'timestamp', nullable: true })
   publishedAt?: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp' })
   createdAt!: Date;
 
   @Column({ type: 'timestamp', nullable: true })
